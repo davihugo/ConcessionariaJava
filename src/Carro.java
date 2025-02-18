@@ -1,12 +1,10 @@
-
-
 public class Carro extends Veiculo implements Dados{
     private int numPortas;
     private int numPassageiros;
-    public Carro(final String marca, final String cor, final int qtde, final String modelo, final String ano, final double valor, final int numPortas, final int numPassageiros) {
-        super(cor, marca, modelo, ano, valor, qtde);
-        this.numPortas=numPortas;
-        this.numPassageiros=numPassageiros;
+    public Carro(String marca, String modelo, int ano, double preco, int numPortas) {
+        super(marca, modelo, ano, preco);
+        this.numPortas = numPortas;
+        this.numPassageiros = 0;
     }
     public void ExibirDados(){
         System.out.println("O carro é o seguinte: "+this.getMarca() + " "+ this.getModelo());
@@ -23,6 +21,4 @@ public class Carro extends Veiculo implements Dados{
     public void setNumPassageiros(final int numPassageiros) {
         this.numPassageiros = numPassageiros;
     }
-
-
 }

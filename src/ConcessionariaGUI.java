@@ -6,164 +6,258 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConcessionariaGUI {
-
-    private JPanel cards;
-    private CardLayout cardLayout;
-    private DefaultTableModel carroTableModel;
-    private DefaultTableModel motoTableModel;
-
-    private JTable carroTable;
-    private JTable motoTable;
-
-    private List<Carro> carros;
-    private List<Moto> motos;
-    private int proximoId = 1;
-
-    // Declara os campos numPortasField e cilindradaField fora do método criarFormulario
-    private JTextField numPortasField;
-    private JTextField cilindradaField;
+public class ConcessionariaGUI extends JFrame {
+    private List<Veiculo> veiculos;
+    private DefaultTableModel modeloTabelaCarros;
+    private DefaultTableModel modeloTabelaMotos;
+    private JTable tabelaCarros;
+    private JTable tabelaMotos;
 
     public ConcessionariaGUI() {
-        JFrame frame = new JFrame("Concessionária de Veículos");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
+        veiculos = new ArrayList<>();
+        
+        setTitle("Sistema de Concessionária");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
-        cardLayout = new CardLayout();
-        cards = new JPanel(cardLayout);
+        JTabbedPane abas = new JTabbedPane();
+        abas.addTab("Carros", criarPainelCarros());
+        abas.addTab("Motos", criarPainelMotos());
 
-        frame.add(cards);
-
-        JButton carroButton = new JButton("Carro");
-        JButton motoButton = new JButton("Moto");
-
-        carroButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cards, "CARRO");
-            }
-        });
-
-        motoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cards, "MOTO");
-            }
-        });
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(carroButton);
-        buttonPanel.add(motoButton);
-
-        JPanel carroPanel = criarFormulario("CARRO");
-        JPanel motoPanel = criarFormulario("MOTO");
-
-        cards.add(carroPanel, "CARRO");
-        cards.add(motoPanel, "MOTO");
-
-        carroTableModel = new DefaultTableModel(new Object[]{"ID", "Marca", "Modelo", "Ano", "Preço", "Cor", "Quantidade", "Número de Portas"}, 0);
-        carroTable = new JTable(carroTableModel);
-        JScrollPane carroTableScrollPane = new JScrollPane(carroTable);
-
-        motoTableModel = new DefaultTableModel(new Object[]{"ID", "Marca", "Modelo", "Ano", "Preço", "Cor", "Quantidade", "Cilindrada"}, 0);
-        motoTable = new JTable(motoTableModel);
-        JScrollPane motoTableScrollPane = new JScrollPane(motoTable);
-
-        frame.add(carroTableScrollPane, BorderLayout.SOUTH);
-        frame.add(motoTableScrollPane, BorderLayout.SOUTH);
-
-        carros = new ArrayList<>();
-        motos = new ArrayList<>();
-
-        frame.setVisible(true);
+        add(abas);
     }
 
-    private JPanel criarFormulario(String veiculo) {
-        JPanel panel = new JPanel(new GridLayout(0, 1));
-        panel.setBorder(BorderFactory.createTitledBorder("Cadastro de " + veiculo));
+    private JPanel criarPainelCarros() {
+        JPanel painel = new JPanel(new BorderLayout());
+        
 
-        JLabel marcaLabel = new JLabel("Marca:");
-        JTextField marcaField = new JTextField(20);
-        JLabel modeloLabel = new JLabel("Modelo:");
-        JTextField modeloField = new JTextField(20);
-        JLabel anoLabel = new JLabel("Ano:");
-        JTextField anoField = new JTextField(10);
-        JLabel precoLabel = new JLabel("Preço:");
-        JTextField precoField = new JTextField(10);
-        JLabel corLabel = new JLabel("Cor:");
-        JTextField corField = new JTextField(20);
-        JLabel qtdeLabel = new JLabel("Quantidade:");
-        JTextField qtdeField = new JTextField(10);
+        JPanel painelEntrada = new JPanel(new GridLayout(6, 2, 5, 5));
+        
+        JTextField campoMarca = new JTextField();
+        JTextField campoModelo = new JTextField();
+        JTextField campoAno = new JTextField();
+        JTextField campoPreco = new JTextField();
+        JTextField campoPortas = new JTextField();
+        
+        painelEntrada.add(new JLabel("Marca:"));
+        painelEntrada.add(campoMarca);
+        painelEntrada.add(new JLabel("Modelo:"));
+        painelEntrada.add(campoModelo);
+        painelEntrada.add(new JLabel("Ano:"));
+        painelEntrada.add(campoAno);
+        painelEntrada.add(new JLabel("Preço:"));
+        painelEntrada.add(campoPreco);
+        painelEntrada.add(new JLabel("Número de Portas:"));
+        painelEntrada.add(campoPortas);
 
-        if (veiculo.equals("CARRO")) {
-            JLabel numPortasLabel = new JLabel("Número de Portas:");
-            numPortasField = new JTextField(10);
-            panel.add(numPortasLabel);
-            panel.add(numPortasField);
-        } else if (veiculo.equals("MOTO")) {
-            JLabel cilindradaLabel = new JLabel("Cilindrada:");
-            cilindradaField = new JTextField(10);
-            panel.add(cilindradaLabel);
-            panel.add(cilindradaField);
-        }
+        String[] colunas = {"Marca", "Modelo", "Ano", "Preço", "Portas"};
+        modeloTabelaCarros = new DefaultTableModel(colunas, 0);
+        tabelaCarros = new JTable(modeloTabelaCarros);
+        JScrollPane scrollPane = new JScrollPane(tabelaCarros);
 
-        JButton adicionarButton = new JButton("Adicionar");
-        adicionarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String marca = marcaField.getText();
-                String modelo = modeloField.getText();
-                int ano = Integer.parseInt(anoField.getText());
-                double preco = Double.parseDouble(precoField.getText());
-                String cor = corField.getText();
-                int qtde = Integer.parseInt(qtdeField.getText());
+        JPanel painelBotoes = new JPanel();
+        JButton btnAdicionar = new JButton("Adicionar");
+        JButton btnEditar = new JButton("Editar");
+        JButton btnExcluir = new JButton("Excluir");
+        JButton btnLimpar = new JButton("Limpar Campos");
 
-                if (veiculo.equals("CARRO")) {
-                    int numeroPortas = Integer.parseInt(numPortasField.getText());
-                    Carro novoCarro = new Carro(proximoId, marca, modelo, ano, preco, numeroPortas, cor, qtde);
-                    carros.add(novoCarro);
-                    carroTableModel.addRow(new Object[]{proximoId, marca, modelo, ano, preco, cor, qtde, numeroPortas});
-                } else if (veiculo.equals("MOTO")) {
-                    int cilindrada = Integer.parseInt(cilindradaField.getText());
-                    Moto novaMoto = new Moto(proximoId, marca, modelo, ano, preco, cilindrada, cor, qtde);
-                    motos.add(novaMoto);
-                    motoTableModel.addRow(new Object[]{proximoId, marca, modelo, ano, preco, cor, qtde, cilindrada});
-                }
+        painelBotoes.add(btnAdicionar);
+        painelBotoes.add(btnEditar);
+        painelBotoes.add(btnExcluir);
+        painelBotoes.add(btnLimpar);
 
-                marcaField.setText("");
-                modeloField.setText("");
-                anoField.setText("");
-                precoField.setText("");
-                corField.setText("");
-                qtdeField.setText("");
-
-                proximoId++;
+        btnAdicionar.addActionListener(e -> {
+            try {
+                Carro carro = new Carro(
+                    campoMarca.getText(),
+                    campoModelo.getText(),
+                    Integer.parseInt(campoAno.getText()),
+                    Double.parseDouble(campoPreco.getText()),
+                    Integer.parseInt(campoPortas.getText())
+                );
+                veiculos.add(carro);
+                atualizarTabelaCarros();
+                limparCampos(campoMarca, campoModelo, campoAno, campoPreco, campoPortas);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Por favor, insira valores válidos!");
             }
         });
 
-        panel.add(marcaLabel);
-        panel.add(marcaField);
-        panel.add(modeloLabel);
-        panel.add(modeloField);
-        panel.add(anoLabel);
-        panel.add(anoField);
-        panel.add(precoLabel);
-        panel.add(precoField);
-        panel.add(corLabel);
-        panel.add(corField);
-        panel.add(qtdeLabel);
-        panel.add(qtdeField);
-        panel.add(adicionarButton);
+        btnEditar.addActionListener(e -> {
+            int linha = tabelaCarros.getSelectedRow();
+            if (linha >= 0) {
+                try {
+                    Carro carro = new Carro(
+                        campoMarca.getText(),
+                        campoModelo.getText(),
+                        Integer.parseInt(campoAno.getText()),
+                        Double.parseDouble(campoPreco.getText()),
+                        Integer.parseInt(campoPortas.getText())
+                    );
+                    veiculos.set(linha, carro);
+                    atualizarTabelaCarros();
+                    limparCampos(campoMarca, campoModelo, campoAno, campoPreco, campoPortas);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Por favor, insira valores válidos!");
+                }
+            }
+        });
 
-        return panel;
+        btnExcluir.addActionListener(e -> {
+            int linha = tabelaCarros.getSelectedRow();
+            if (linha >= 0) {
+                veiculos.remove(linha);
+                atualizarTabelaCarros();
+            }
+        });
+
+        btnLimpar.addActionListener(e -> {
+            limparCampos(campoMarca, campoModelo, campoAno, campoPreco, campoPortas);
+        });
+
+        painel.add(painelEntrada, BorderLayout.NORTH);
+        painel.add(scrollPane, BorderLayout.CENTER);
+        painel.add(painelBotoes, BorderLayout.SOUTH);
+
+        return painel;
+    }
+
+    private JPanel criarPainelMotos() {
+        JPanel painel = new JPanel(new BorderLayout());
+        
+        JPanel painelEntrada = new JPanel(new GridLayout(6, 2, 5, 5));
+        
+        JTextField campoMarca = new JTextField();
+        JTextField campoModelo = new JTextField();
+        JTextField campoAno = new JTextField();
+        JTextField campoPreco = new JTextField();
+        JTextField campoCilindradas = new JTextField();
+        
+        painelEntrada.add(new JLabel("Marca:"));
+        painelEntrada.add(campoMarca);
+        painelEntrada.add(new JLabel("Modelo:"));
+        painelEntrada.add(campoModelo);
+        painelEntrada.add(new JLabel("Ano:"));
+        painelEntrada.add(campoAno);
+        painelEntrada.add(new JLabel("Preço:"));
+        painelEntrada.add(campoPreco);
+        painelEntrada.add(new JLabel("Cilindradas:"));
+        painelEntrada.add(campoCilindradas);
+
+        String[] colunas = {"Marca", "Modelo", "Ano", "Preço", "Cilindradas"};
+        modeloTabelaMotos = new DefaultTableModel(colunas, 0);
+        tabelaMotos = new JTable(modeloTabelaMotos);
+        JScrollPane scrollPane = new JScrollPane(tabelaMotos);
+
+        JPanel painelBotoes = new JPanel();
+        JButton btnAdicionar = new JButton("Adicionar");
+        JButton btnEditar = new JButton("Editar");
+        JButton btnExcluir = new JButton("Excluir");
+        JButton btnLimpar = new JButton("Limpar Campos");
+
+        painelBotoes.add(btnAdicionar);
+        painelBotoes.add(btnEditar);
+        painelBotoes.add(btnExcluir);
+        painelBotoes.add(btnLimpar);
+
+        btnAdicionar.addActionListener(e -> {
+            try {
+                Moto moto = new Moto(
+                    campoMarca.getText(),
+                    campoModelo.getText(),
+                    Integer.parseInt(campoAno.getText()),
+                    Double.parseDouble(campoPreco.getText()),
+                    Integer.parseInt(campoCilindradas.getText())
+                );
+                veiculos.add(moto);
+                atualizarTabelaMotos();
+                limparCampos(campoMarca, campoModelo, campoAno, campoPreco, campoCilindradas);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Por favor, insira valores válidos!");
+            }
+        });
+
+        btnEditar.addActionListener(e -> {
+            int linha = tabelaMotos.getSelectedRow();
+            if (linha >= 0) {
+                try {
+                    Moto moto = new Moto(
+                        campoMarca.getText(),
+                        campoModelo.getText(),
+                        Integer.parseInt(campoAno.getText()),
+                        Double.parseDouble(campoPreco.getText()),
+                        Integer.parseInt(campoCilindradas.getText())
+                    );
+                    veiculos.set(linha, moto);
+                    atualizarTabelaMotos();
+                    limparCampos(campoMarca, campoModelo, campoAno, campoPreco, campoCilindradas);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Por favor, insira valores válidos!");
+                }
+            }
+        });
+
+        btnExcluir.addActionListener(e -> {
+            int linha = tabelaMotos.getSelectedRow();
+            if (linha >= 0) {
+                veiculos.remove(linha);
+                atualizarTabelaMotos();
+            }
+        });
+
+        btnLimpar.addActionListener(e -> {
+            limparCampos(campoMarca, campoModelo, campoAno, campoPreco, campoCilindradas);
+        });
+
+        painel.add(painelEntrada, BorderLayout.NORTH);
+        painel.add(scrollPane, BorderLayout.CENTER);
+        painel.add(painelBotoes, BorderLayout.SOUTH);
+
+        return painel;
+    }
+
+    private void atualizarTabelaCarros() {
+        modeloTabelaCarros.setRowCount(0);
+        for (Veiculo veiculo : veiculos) {
+            if (veiculo instanceof Carro) {
+                Carro carro = (Carro) veiculo;
+                modeloTabelaCarros.addRow(new Object[]{
+                    carro.getMarca(),
+                    carro.getModelo(),
+                    carro.getAno(),
+                    carro.getPreco(),
+                    carro.getNumPortas()
+                });
+            }
+        }
+    }
+
+    private void atualizarTabelaMotos() {
+        modeloTabelaMotos.setRowCount(0);
+        for (Veiculo veiculo : veiculos) {
+            if (veiculo instanceof Moto) {
+                Moto moto = (Moto) veiculo;
+                modeloTabelaMotos.addRow(new Object[]{
+                    moto.getMarca(),
+                    moto.getModelo(),
+                    moto.getAno(),
+                    moto.getPreco(),
+                    moto.getCilindradas()
+                });
+            }
+        }
+    }
+
+    private void limparCampos(JTextField... campos) {
+        for (JTextField campo : campos) {
+            campo.setText("");
+        }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new ConcessionariaGUI();
-            }
+        SwingUtilities.invokeLater(() -> {
+            new ConcessionariaGUI().setVisible(true);
         });
     }
 }

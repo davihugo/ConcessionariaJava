@@ -1,19 +1,16 @@
 public class Moto extends Veiculo implements Dados {
-    private int Cilindrada;
+    private int cilindradas;
 
-    public Moto(String cor, String marca, String modelo, String ano, double valor, int Cilindrada, int qtde) {
-        super(cor, marca, modelo, ano, valor,qtde);
-        this.Cilindrada = Cilindrada;
+    public Moto(String marca, String modelo, int ano, double preco, int cilindradas) {
+        super(marca, modelo, ano, preco);
+        this.cilindradas = cilindradas;
     }
 
-    public int getCilindrada() {
-        return Cilindrada;
+    public int getCilindradas() {
+        return cilindradas;
     }
-    public void setCilindrada(int cilindrada) {
-        Cilindrada = cilindrada;
-    }
+
     public void ExibirDados(){
-        System.out.println("A moto é a seguinte: "+this.getMarca() + " "+ this.getModelo() + " "+ getCilindrada());
+        System.out.println("A moto é a seguinte: "+this.getMarca() + " "+ this.getModelo() + " "+ getCilindradas());
     }
-
 }
